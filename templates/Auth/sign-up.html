@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Account | Digital Shop USA{% endblock %}
+
+{% block body %}
+<section class="ds-page">
+    <div class="ds-container">
+        <div class="ds-auth">
+            <h1>Create your account</h1>
+            <p>Join Digital Shop USA to save carts, track orders, and shop faster.</p>
+            <form action="" method="POST" style="display:grid;gap:0.85rem;">
+                {% csrf_token %}
+                {% include 'alert.html' %}
+                <div>
+                    <label for="first_name" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">First name</label>
+                    <input id="first_name" name="first_name" type="text" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="last_name" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Last name</label>
+                    <input id="last_name" name="last_name" type="text" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="user_name" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Username</label>
+                    <input id="user_name" name="user_name" type="text" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="email" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Email</label>
+                    <input id="email" name="email" type="email" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="password" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Password</label>
+                    <input id="password" name="password" type="password" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="c_password" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Confirm password</label>
+                    <input id="c_password" name="c_password" type="password" required style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <button class="ds-btn ds-btn--primary ds-btn--block" type="submit">Sign Up</button>
+            </form>
+            <p style="margin-top:1.25rem;margin-bottom:0;text-align:center;font-size:0.9rem;">
+                Already have an account? <a href="{% url 'Login' %}">Log in</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

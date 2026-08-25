@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+{% load Save_Money %}
+{% load product_images %}
+
+{% block title %}Cart | Digital Shop USA{% endblock %}
+
+{% block body %}
+<section class="ds-page">
+    <div class="ds-container">
+        <nav class="ds-breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span aria-hidden="true">/</span>
+            <span>Cart</span>
+        </nav>
+
+        <div class="ds-section__head">
+            <h1 style="margin:0 0 0.35rem;font-size:clamp(1.6rem,2.5vw,2.1rem);letter-spacing:-0.03em;">Your Cart</h1>
+            <p>Review items before secure checkout.</p>
+        </div>
+
+        <div class="ds-cart-layout" style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:1.5rem;align-items:start;">
+            <div>
+                <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'CartPDF' %}" style="margin-bottom:1rem;">Save PDF</a>
+                <div class="ds-cart-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in cat_prod %}
+                            <tr>
+                                <td>
+                                    <div style="display:flex;gap:0.85rem;align-items:center;">
+                                        <img src="{% product_image item.products %}" alt="{{ item.products.Product_Name }}" width="72" height="72" style="width:72px;height:72px;object-fit:contain;border-radius:10px;background:var(--ds-surface-muted);">
+                                        <div>
+                                            <a href="{% url 'Products_Details' item.products.id %}" style="font-weight:700;">{{ item.products.Product_Name|truncatechars:48 }}</a>
+                                            <div style="font-size:0.82rem;color:var(--ds-text-muted);margin-top:0.25rem;">
+                                                {{ item.products.Category.Category_Name }}
+                                                {% if item.products.Product_Brand %} · {{ item.products.Product_Brand }}{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>{{ item.products.Special_Price|shop_price }}</strong>
+                                    {% if item.products.Regular_Price > item.products.Special_Price %}
+                                    <div style="font-size:0.8rem;color:var(--ds-text-muted);"><del>{{ item.products.Regular_Price|shop_price }}</del></div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display:inline-flex;align-items:center;gap:0.45rem;border:1px solid var(--ds-border);border-radius:999px;padding:0.25rem 0.45rem;">
+                                        <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm minus-cart" data-id="{{ item.products.id }}" aria-label="Decrease quantity" style="min-height:32px;padding:0.2rem 0.55rem;">−</button>
+                                        <span id="quantity{{ item.products.id }}">{{ item.quantity }}</span>
+                                        <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm plus-cart" data-id="{{ item.products.id }}" aria-label="Increase quantity" style="min-height:32px;padding:0.2rem 0.55rem;">+</button>
+                                    </div>
+                                </td>
+                                <td><strong id="pro_total_price{{ item.products.id }}">{{ item.total_price }} ৳</strong></td>
+                                <td>
+                                    <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm remove-cart" data-id="{{ item.products.id }}" style="color:var(--ds-danger) !important;">Remove</button>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" style="padding:2rem;text-align:center;color:var(--ds-text-muted);">Your cart is empty. <a href="{% url 'home' %}#featured-technology">Browse products</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <aside style="background:var(--ds-surface);border:1px solid var(--ds-border);border-radius:var(--ds-radius);padding:1.25rem;position:sticky;top:110px;">
+                <h2 style="margin:0 0 1rem;font-size:1.1rem;">Order Summary</h2>
+                <div style="display:grid;gap:0.65rem;font-size:0.95rem;margin-bottom:1rem;">
+                    <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><strong id="amount">{{ amount }} ৳</strong></div>
+                    <div style="display:flex;justify-content:space-between;color:var(--ds-text-muted);"><span>Shipping</span><span>{{ shipping_amount }} ৳</span></div>
+                    <div style="display:flex;justify-content:space-between;border-top:1px solid var(--ds-border);padding-top:0.75rem;font-size:1.05rem;"><span>Total</span><strong id="total_amount">{{ total_amount }} ৳</strong></div>
+                </div>
+                <a class="ds-btn ds-btn--primary ds-btn--block" href="{% url 'payment' %}">Proceed to Checkout</a>
+                <a class="ds-btn ds-btn--ghost ds-btn--block" href="{% url 'home' %}" style="margin-top:0.6rem;">Continue Shopping</a>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+$('.plus-cart').click(function(){
+  var id = $(this).attr('data-id');
+  $.ajax({
+    type: 'GET',
+    url: "{% url 'plus_cart' %}",
+    data: { prod_id: id },
+    success: function(data){
+      $('#quantity'+id).text(data.quantity);
+      $('#pro_total_price'+id).text(data.pro_total_price + ' ৳');
+      $('#amount').text(data.amount + ' ৳');
+      $('#total_amount').text(data.total_amount + ' ৳');
+    }
+  });
+});
+$('.minus-cart').click(function(){
+  var id = $(this).attr('data-id');
+  $.ajax({
+    type: 'GET',
+    url: "{% url 'minus_cart' %}",
+    data: { prod_id: id },
+    success: function(data){
+      $('#quantity'+id).text(data.quantity);
+      $('#pro_total_price'+id).text(data.pro_total_price + ' ৳');
+      $('#amount').text(data.amount + ' ৳');
+      $('#total_amount').text(data.total_amount + ' ৳');
+    }
+  });
+});
+$('.remove-cart').click(function(){
+  var id = $(this).attr('data-id');
+  $.ajax({
+    type: 'GET',
+    url: "{% url 'remove_cart' %}",
+    data: { prod_id: id },
+    success: function(){ location.reload(); }
+  });
+});
+</script>
+{% endblock %}

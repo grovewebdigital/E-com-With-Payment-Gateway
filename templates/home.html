@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+{% load product_images %}
+
+{% block title %}Digital Shop USA | Computers, Components & Technology{% endblock %}
+{% block meta_description %}Shop computers, components, storage, memory, graphics hardware and accessories at Digital Shop USA. Explore technology products for modern setups.{% endblock %}
+
+{% block body %}
+<section class="ds-hero" aria-labelledby="hero-heading">
+    <div class="ds-container ds-hero__grid">
+        <div class="ds-hero__copy">
+            <h1 id="hero-heading">Upgrade Your Setup With Better Technology</h1>
+            <p>Shop computers, components, storage, memory, graphics hardware, and essential accessories from Digital Shop USA.</p>
+            <div class="ds-hero__ctas">
+                <a class="ds-btn ds-btn--primary" href="#featured-technology">Shop Products →</a>
+                <a class="ds-btn ds-btn--ghost" href="#shop-by-category">Explore Categories</a>
+            </div>
+            <div class="ds-trust-row" aria-label="Store highlights">
+                <span class="ds-trust-pill"><i class="fa-solid fa-truck" aria-hidden="true"></i> USA Shipping</span>
+                <span class="ds-trust-pill"><i class="fa-solid fa-lock" aria-hidden="true"></i> Secure Checkout</span>
+                <span class="ds-trust-pill"><i class="fa-solid fa-microchip" aria-hidden="true"></i> Quality Products</span>
+            </div>
+        </div>
+        <div class="ds-hero__visual">
+            <img src="{% static 'assets/hero/hero-setup.webp' %}" alt="Premium technology setup with laptop, graphics card, SSD, memory, and motherboard" width="1200" height="825" fetchpriority="high">
+        </div>
+    </div>
+</section>
+
+<section class="ds-section" id="shop-by-category" aria-labelledby="category-heading">
+    <div class="ds-container">
+        <div class="ds-section__head">
+            <h2 id="category-heading">Shop by Category</h2>
+            <p>Find the hardware and technology you need for your next setup.</p>
+        </div>
+        <div class="ds-cat-grid">
+            {% for c in cat %}
+            <a class="ds-cat-card" href="{% url 'Products_Category_Show' c.id %}">
+                <div class="ds-cat-card__media">
+                    <img src="{% category_image c %}" alt="{{ c.Category_Name }}" loading="lazy" width="640" height="440">
+                </div>
+                <div class="ds-cat-card__body">
+                    <h3>{{ c.Category_Name }}</h3>
+                    <p>{% category_blurb c %}</p>
+                    <span class="ds-cat-card__cta">Shop {{ c.Category_Name }} →</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="ds-section ds-section--tight" id="featured-technology" aria-labelledby="featured-heading">
+    <div class="ds-container">
+        <div class="ds-section__head">
+            <h2 id="featured-heading">Featured Technology</h2>
+            <p>Explore selected hardware and components for your next upgrade.</p>
+        </div>
+
+        <div class="ds-prod-grid">
+            {% for pro in pro %}
+            <article class="ds-prod-card">
+                <div class="ds-prod-card__media">
+                    <a href="{% url 'Products_Details' pro.id %}">
+                        <img src="{% product_image pro %}" alt="{{ pro.Product_Name }}" loading="lazy" width="400" height="400">
+                    </a>
+                    {% if user.is_authenticated %}
+                    <button class="ds-prod-card__wish add-wishlist" type="button" data-product="{{ pro.id }}" aria-label="Add to wishlist">
+                        <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                    </button>
+                    {% else %}
+                    <a class="ds-prod-card__wish" href="{% url 'Login' %}" aria-label="Log in to use wishlist">
+                        <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="ds-prod-card__body">
+                    <div class="ds-prod-card__cat">{{ pro.Category.Category_Name }}</div>
+                    <h3 class="ds-prod-card__title">
+                        <a href="{% url 'Products_Details' pro.id %}">{{ pro.Product_Name }}</a>
+                    </h3>
+                    <div class="ds-prod-card__price">
+                        <strong>{{ pro.Special_Price|shop_price }}</strong>
+                        {% if pro.Regular_Price and pro.Regular_Price > pro.Special_Price %}
+                        <del>{{ pro.Regular_Price|shop_price }}</del>
+                        {% endif %}
+                    </div>
+                    <div class="ds-prod-card__actions">
+                        {% if user.is_authenticated %}
+                        <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Add_To_Cart' pro.id %}">Add to Cart</a>
+                        {% else %}
+                        <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Login' %}">Add to Cart</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <p>No products available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="ds-section ds-section--tight" aria-labelledby="promo-heading">
+    <div class="ds-container">
+        <div class="ds-promo">
+            <div>
+                <h2 id="promo-heading">Build Better. Upgrade Smarter.</h2>
+                <p>Discover the components and technology you need to create a faster, cleaner and more capable setup.</p>
+                <a class="ds-btn ds-btn--ghost" style="border-color:rgba(255,255,255,.35);color:#fff !important;" href="#featured-technology">Explore Products →</a>
+            </div>
+            <div class="ds-promo__visual">
+                <img src="{% static 'assets/categories/cat-gpu.webp' %}" alt="Graphics hardware featured for Digital Shop USA" loading="lazy" width="400" height="400">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ds-section" id="trust" aria-labelledby="trust-heading">
+    <div class="ds-container">
+        <div class="ds-section__head">
+            <h2 id="trust-heading">Why Shop With Digital Shop USA</h2>
+            <p>A focused technology shopping experience built around clarity, security, and useful product selection.</p>
+        </div>
+        <div class="ds-benefits">
+            <div class="ds-benefit">
+                <div class="ds-benefit__icon" aria-hidden="true"><i class="fa-solid fa-truck-fast"></i></div>
+                <h3>USA Shipping</h3>
+                <p>Shipping information for eligible US orders.</p>
+            </div>
+            <div class="ds-benefit">
+                <div class="ds-benefit__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Secure Checkout</h3>
+                <p>Secure customer checkout experience.</p>
+            </div>
+            <div class="ds-benefit">
+                <div class="ds-benefit__icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></div>
+                <h3>Product Selection</h3>
+                <p>A growing selection of technology products.</p>
+            </div>
+            <div class="ds-benefit">
+                <div class="ds-benefit__icon" aria-hidden="true"><i class="fa-solid fa-headset"></i></div>
+                <h3>Customer Support</h3>
+                <p>Help when customers need assistance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.querySelectorAll('.add-wishlist').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-product');
+      if (!id) return;
+      fetch("{% url 'add_wish_list' %}?pid=" + encodeURIComponent(id), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      }).catch(function () {});
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+{% load product_images %}
+
+{% block title %}{{ pro.Product_Name }} | Digital Shop USA{% endblock %}
+{% block meta_description %}{{ pro.Product_Name }} — shop technology products at Digital Shop USA.{% endblock %}
+
+{% block body %}
+<section class="ds-page">
+    <div class="ds-container">
+        <nav class="ds-breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span aria-hidden="true">/</span>
+            <a href="{% url 'Products_Category_Show' pro.Category.id %}">{{ pro.Category.Category_Name }}</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ pro.Product_Name|truncatechars:40 }}</span>
+        </nav>
+
+        <div class="ds-detail">
+            <div class="ds-detail__media">
+                <img src="{% product_image pro %}" alt="{{ pro.Product_Name }}" width="800" height="800">
+            </div>
+            <div class="ds-detail__info">
+                <div class="ds-prod-card__cat">{{ pro.Category.Category_Name }}</div>
+                <h1>{{ pro.Product_Name }}</h1>
+                <div class="ds-detail__meta">
+                    {% if pro.Product_Brand %}<span>Brand: {{ pro.Product_Brand }}</span>{% endif %}
+                    {% if pro.Product_Model %}<span> · Model: {{ pro.Product_Model }}</span>{% endif %}
+                    {% if pro.Warranty %}<span> · Warranty: {{ pro.Warranty }}</span>{% endif %}
+                </div>
+                <div class="ds-detail__price">
+                    {{ pro.Special_Price|shop_price }}
+                    {% if pro.Regular_Price and pro.Regular_Price > pro.Special_Price %}
+                    <del>{{ pro.Regular_Price|shop_price }}</del>
+                    {% endif %}
+                </div>
+                {% if pro.Product_Details %}
+                <p style="color:var(--ds-text-muted);margin:0 0 1.5rem;">{{ pro.Product_Details }}</p>
+                {% endif %}
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+                    {% if user.is_authenticated %}
+                    <a class="ds-btn ds-btn--primary" href="{% url 'Add_To_Cart' pro.id %}">Add to Cart</a>
+                    <button class="ds-btn ds-btn--ghost add-wishlist" type="button" data-product="{{ pro.id }}">Add to Wishlist</button>
+                    {% else %}
+                    <a class="ds-btn ds-btn--primary" href="{% url 'Login' %}">Add to Cart</a>
+                    <a class="ds-btn ds-btn--ghost" href="{% url 'Login' %}">Add to Wishlist</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if related_products %}
+        <section class="ds-section ds-section--tight" aria-labelledby="related-heading">
+            <div class="ds-section__head">
+                <h2 id="related-heading">Related Products</h2>
+                <p>More options from the {{ pro.Category.Category_Name }} category.</p>
+            </div>
+            <div class="ds-prod-grid">
+                {% for item in related_products %}
+                <article class="ds-prod-card">
+                    <div class="ds-prod-card__media">
+                        <a href="{% url 'Products_Details' item.id %}">
+                            <img src="{% product_image item %}" alt="{{ item.Product_Name }}" loading="lazy" width="400" height="400">
+                        </a>
+                    </div>
+                    <div class="ds-prod-card__body">
+                        <div class="ds-prod-card__cat">{{ item.Category.Category_Name }}</div>
+                        <h3 class="ds-prod-card__title"><a href="{% url 'Products_Details' item.id %}">{{ item.Product_Name }}</a></h3>
+                        <div class="ds-prod-card__price"><strong>{{ item.Special_Price|shop_price }}</strong></div>
+                        <div class="ds-prod-card__actions">
+                            {% if user.is_authenticated %}
+                            <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Add_To_Cart' item.id %}">Add to Cart</a>
+                            {% else %}
+                            <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Login' %}">Add to Cart</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.querySelectorAll('.add-wishlist').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-product');
+      if (!id) return;
+      fetch("{% url 'add_wish_list' %}?pid=" + encodeURIComponent(id), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      }).catch(function () {});
+    });
+  });
+</script>
+{% endblock %}

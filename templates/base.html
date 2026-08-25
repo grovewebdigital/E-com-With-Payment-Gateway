@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+{% load static %}
+{% load product_images %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Digital Shop USA | Computers, Components & Technology{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Shop computers, components, storage, memory, graphics hardware and accessories at Digital Shop USA. Explore technology products for modern setups.{% endblock %}">
+    <meta name="author" content="Digital Shop USA">
+    <meta name="keywords" content="Digital Shop USA, computers, components, graphics cards, SSD, RAM, technology">
+    <meta property="og:site_name" content="Digital Shop USA">
+    <meta property="og:title" content="{% block og_title %}Digital Shop USA | Computers, Components & Technology{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Shop computers, components, storage, memory, graphics hardware and accessories at Digital Shop USA.{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{% static 'assets/hero/hero-setup.webp' %}">
+    <link rel="icon" href="{% static 'assets/brand/favicon.svg' %}" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="{% static 'assets/css/dsusa.css' %}">
+    {% block css %}{% endblock %}
+</head>
+<body class="ds-body">
+    <a class="visually-hidden-focusable" href="#main-content" style="position:absolute;left:-9999px;">Skip to content</a>
+
+    <div class="ds-announce" role="region" aria-label="Site announcement">
+        <div class="ds-container ds-announce__inner">
+            <p style="margin:0;">Free shipping on eligible orders across the USA</p>
+            <a href="#featured-technology">Shop Now →</a>
+        </div>
+    </div>
+
+    <header class="ds-header">
+        <div class="ds-container ds-header__main">
+            <button class="ds-menu-toggle" type="button" id="dsMenuOpen" aria-label="Open menu" aria-controls="dsMobileNav" aria-expanded="false">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+
+            <a href="{% url 'home' %}" class="ds-logo" aria-label="Digital Shop USA home">
+                <span class="ds-logo__mark" aria-hidden="true">DS</span>
+                <span class="ds-logo__text">
+                    <strong>Digital Shop USA</strong>
+                    <span>Technology Retail</span>
+                </span>
+            </a>
+
+            <form class="ds-search" action="{% url 'Search_Products_results' %}" method="GET" role="search">
+                <label class="visually-hidden" for="dsSearch" style="position:absolute;left:-9999px;">Search</label>
+                <input id="dsSearch" type="search" name="search" placeholder="Search products, brands, and categories..." autocomplete="off">
+                <button type="submit" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                </button>
+            </form>
+
+            <nav class="ds-actions" aria-label="Account shortcuts">
+                <div class="ds-dropdown">
+                    <button class="ds-action" type="button" aria-haspopup="true" aria-expanded="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>Account</span>
+                    </button>
+                    <div class="ds-dropdown__panel" role="menu">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'UserProfile' %}" role="menuitem">{{ user.get_full_name|default:user.username }}</a>
+                            <a href="{% url 'UserProfile' %}" role="menuitem">My Account</a>
+                            <a href="{% url 'LogOut' %}" role="menuitem">Log Out</a>
+                        {% else %}
+                            <a href="{% url 'Login' %}" role="menuitem">Log In</a>
+                            <a href="{% url 'Registration' %}" role="menuitem">Register</a>
+                            <a href="{% url 'forget_password' %}" role="menuitem">Forgot Password</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <a class="ds-action" href="{% url 'Compleate_Pyment' %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M21 8H3"/><path d="M21 12H3"/><path d="M21 16H3"/><path d="M7 4v16"/><path d="M17 4v16"/></svg>
+                    <span>Orders</span>
+                </a>
+
+                <a class="ds-action" href="{% url 'UserProfile' %}" aria-label="Wishlist">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M19.5 12.6 12 20l-7.5-7.4a4.6 4.6 0 0 1 6.5-6.5l1 1 1-1a4.6 4.6 0 0 1 6.5 6.5Z"/></svg>
+                    <span>Wishlist</span>
+                    {% if user.is_authenticated and count_wish %}
+                        <span class="ds-badge">{{ count_wish }}</span>
+                    {% endif %}
+                </a>
+
+                <div class="ds-dropdown">
+                    <button class="ds-action" type="button" aria-label="Cart" aria-haspopup="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L21 8H7"/></svg>
+                        <span>Cart</span>
+                        {% if user.is_authenticated and count %}
+                            <span class="ds-badge">{{ count }}</span>
+                        {% endif %}
+                    </button>
+                    <div class="ds-dropdown__panel ds-cart-panel" role="menu">
+                        {% if user.is_authenticated and cat_prod %}
+                            {% for item in cat_prod %}
+                                <div class="ds-cart-item">
+                                    <img src="{% product_image item.products %}" alt="{{ item.products.Product_Name }}" loading="lazy" width="56" height="56">
+                                    <div>
+                                        <h5>{{ item.products.Product_Name|truncatechars:42 }}</h5>
+                                        <p>{{ item.quantity }} × {{ item.products.Special_Price|shop_price }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="ds-cart-total">
+                                <span>Total</span>
+                                <span>{{ total_amount|shop_price }}</span>
+                            </div>
+                            <div class="ds-cart-actions">
+                                <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'Show_Cart' %}">View Cart</a>
+                                <a class="ds-btn ds-btn--primary ds-btn--sm" href="{% url 'payment' %}">Checkout</a>
+                            </div>
+                        {% else %}
+                            <p style="padding:0.85rem;margin:0;color:var(--ds-text-muted);font-size:0.9rem;">Your cart is empty.</p>
+                            <div class="ds-cart-actions">
+                                <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'home' %}#featured-technology">Browse Products</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <nav class="ds-nav" aria-label="Primary">
+            <div class="ds-container ds-nav__inner">
+                {% for c in cat %}
+                    {% if c.Category_Name == "Laptop" %}
+                        <a href="{% url 'Products_Category_Show' c.id %}">Computers</a>
+                    {% elif c.Category_Name == "Processor" or c.Category_Name == "Motherboard" or c.Category_Name == "CPU Cooler" %}
+                        {% if c.Category_Name == "Processor" %}<a href="{% url 'Products_Category_Show' c.id %}">Components</a>{% endif %}
+                    {% elif c.Category_Name == "HDD" or c.Category_Name == "SSD" %}
+                        {% if c.Category_Name == "SSD" %}<a href="{% url 'Products_Category_Show' c.id %}">Storage</a>{% endif %}
+                    {% elif c.Category_Name == "RAM" %}
+                        <a href="{% url 'Products_Category_Show' c.id %}">Memory</a>
+                    {% elif c.Category_Name == "Graphics Card" %}
+                        <a href="{% url 'Products_Category_Show' c.id %}">Graphics</a>
+                    {% elif c.Category_Name == "Keyboard" or c.Category_Name == "Mouse" %}
+                        {% if c.Category_Name == "Keyboard" %}<a href="{% url 'Products_Category_Show' c.id %}">Accessories</a>{% endif %}
+                    {% elif c.Category_Name == "Power Supply" %}
+                        <a href="{% url 'Products_Category_Show' c.id %}">Power</a>
+                    {% endif %}
+                {% endfor %}
+                <a class="ds-nav__shop" href="#shop-by-category">Shop All</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="ds-mobile-nav" id="dsMobileNav" hidden>
+        <div class="ds-mobile-nav__panel" role="dialog" aria-modal="true" aria-label="Mobile menu">
+            <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm" id="dsMenuClose" style="margin-bottom:1rem;">Close</button>
+            <a href="{% url 'home' %}">Home</a>
+            {% for c in cat %}
+                <a href="{% url 'Products_Category_Show' c.id %}">{{ c.Category_Name }}</a>
+            {% endfor %}
+            <a href="{% url 'Show_Cart' %}">Cart</a>
+            <a href="{% url 'UserProfile' %}">Account</a>
+            <a href="{% url 'Login' %}">Log In</a>
+        </div>
+    </div>
+
+    <main id="main-content">
+        {% if messages %}
+            <div class="ds-container" style="padding-top:1rem;">
+                {% for message in messages %}
+                    <div class="ds-alert {% if message.tags == 'error' or message.tags == 'danger' %}ds-alert--danger{% else %}ds-alert--success{% endif %}" role="status">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block body %}{% endblock %}
+    </main>
+
+    <footer class="ds-footer">
+        <div class="ds-container">
+            <div class="ds-footer__grid">
+                <div class="ds-footer__brand">
+                    <a href="{% url 'home' %}" class="ds-logo" style="color:#fff !important;">
+                        <span class="ds-logo__mark">DS</span>
+                        <span class="ds-logo__text">
+                            <strong style="color:#fff;">Digital Shop USA</strong>
+                            <span style="color:#93a0b2;">Technology Retail</span>
+                        </span>
+                    </a>
+                    <p>Technology, components and digital hardware for modern setups.</p>
+                    <p style="margin-top:0.75rem;">Serving Customers Across the USA</p>
+                </div>
+
+                <div>
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}#featured-technology">All Products</a></li>
+                        {% for c in cat %}
+                            {% if c.Category_Name == "Laptop" %}<li><a href="{% url 'Products_Category_Show' c.id %}">Computers</a></li>{% endif %}
+                            {% if c.Category_Name == "Processor" %}<li><a href="{% url 'Products_Category_Show' c.id %}">Components</a></li>{% endif %}
+                            {% if c.Category_Name == "SSD" %}<li><a href="{% url 'Products_Category_Show' c.id %}">Storage</a></li>{% endif %}
+                            {% if c.Category_Name == "Graphics Card" %}<li><a href="{% url 'Products_Category_Show' c.id %}">Graphics</a></li>{% endif %}
+                            {% if c.Category_Name == "Keyboard" %}<li><a href="{% url 'Products_Category_Show' c.id %}">Accessories</a></li>{% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Customer</h4>
+                    <ul>
+                        <li><a href="{% url 'UserProfile' %}">My Account</a></li>
+                        <li><a href="{% url 'Compleate_Pyment' %}">Orders</a></li>
+                        <li><a href="{% url 'UserProfile' %}">Wishlist</a></li>
+                        <li><a href="{% url 'Show_Cart' %}">Cart</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Help</h4>
+                    <ul>
+                        <li><a href="{% url 'UserProfile' %}">Contact Support</a></li>
+                        <li><a href="{% url 'home' %}#trust">Shipping</a></li>
+                        <li><a href="{% url 'home' %}#trust">Returns</a></li>
+                        <li><a href="{% url 'home' %}#trust">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">About</a></li>
+                        <li><a href="{% url 'home' %}">Privacy</a></li>
+                        <li><a href="{% url 'home' %}">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ds-footer__bottom">
+                <p style="margin:0;">© {% now "Y" %} Digital Shop USA. All rights reserved.</p>
+                <p style="margin:0;">English · Catalog prices as listed</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="ds-back-top" aria-label="Back to top"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      (function () {
+        var nav = document.getElementById('dsMobileNav');
+        var openBtn = document.getElementById('dsMenuOpen');
+        var closeBtn = document.getElementById('dsMenuClose');
+        function openMenu() {
+          nav.hidden = false;
+          nav.classList.add('is-open');
+          openBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeMenu() {
+          nav.classList.remove('is-open');
+          nav.hidden = true;
+          openBtn.setAttribute('aria-expanded', 'false');
+        }
+        if (openBtn) openBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (nav) nav.addEventListener('click', function (e) { if (e.target === nav) closeMenu(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+      })();
+    </script>
+    {% block js %}{% endblock %}
+</body>
+</html>

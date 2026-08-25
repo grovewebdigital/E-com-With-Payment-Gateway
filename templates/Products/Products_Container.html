@@ -1,0 +1,44 @@
+{% load static %}
+{% load product_images %}
+{% for pro in page_obj %}
+<article class="ds-prod-card">
+    <div class="ds-prod-card__media">
+        <a href="{% url 'Products_Details' pro.id %}">
+            <img src="{% product_image pro %}" alt="{{ pro.Product_Name }}" loading="lazy" width="400" height="400">
+        </a>
+        {% if user.is_authenticated %}
+        <button class="ds-prod-card__wish add-wishlist" type="button" data-product="{{ pro.id }}" aria-label="Add to wishlist">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+        </button>
+        {% else %}
+        <a class="ds-prod-card__wish" href="{% url 'Login' %}" aria-label="Log in to use wishlist">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+        </a>
+        {% endif %}
+    </div>
+    <div class="ds-prod-card__body">
+        <div class="ds-prod-card__cat">{{ pro.Category.Category_Name }}</div>
+        <h3 class="ds-prod-card__title">
+            <a href="{% url 'Products_Details' pro.id %}">{{ pro.Product_Name }}</a>
+        </h3>
+        {% if pro.Product_Brand %}
+        <p style="margin:0;font-size:0.82rem;color:var(--ds-text-muted);">{{ pro.Product_Brand }}</p>
+        {% endif %}
+        <div class="ds-prod-card__price">
+            <strong>{{ pro.Special_Price|shop_price }}</strong>
+            {% if pro.Regular_Price and pro.Regular_Price > pro.Special_Price %}
+            <del>{{ pro.Regular_Price|shop_price }}</del>
+            {% endif %}
+        </div>
+        <div class="ds-prod-card__actions">
+            {% if user.is_authenticated %}
+            <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Add_To_Cart' pro.id %}">Add to Cart</a>
+            {% else %}
+            <a class="ds-btn ds-btn--primary ds-btn--sm ds-btn--block" href="{% url 'Login' %}">Add to Cart</a>
+            {% endif %}
+        </div>
+    </div>
+</article>
+{% empty %}
+<p>No products found in this category.</p>
+{% endfor %}

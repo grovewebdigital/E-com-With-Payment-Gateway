@@ -1,0 +1,40 @@
+{% load static %}
+{% load product_images %}
+<aside class="ds-filter-panel" aria-label="Product filters">
+    <h4>Filters</h4>
+
+    <div style="margin-bottom:1.25rem;">
+        <p style="margin:0 0 0.5rem;font-size:0.82rem;font-weight:700;color:var(--ds-text-muted);text-transform:uppercase;letter-spacing:.04em;">Search</p>
+        <form action="{% url 'Search_Products_results' %}" method="GET">
+            <div class="ds-search" style="max-width:none;">
+                <input type="search" name="search" placeholder="Search products...">
+                <button type="submit" aria-label="Search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div style="margin-bottom:1.25rem;">
+        <p style="margin:0 0 0.5rem;font-size:0.82rem;font-weight:700;color:var(--ds-text-muted);text-transform:uppercase;letter-spacing:.04em;">Category</p>
+        <ul style="list-style:none;margin:0;padding:0;display:grid;gap:0.35rem;">
+            {% for c in cat %}
+            <li>
+                <a href="{% url 'Products_Category_Show' c.id %}" style="display:flex;justify-content:space-between;padding:0.45rem 0.2rem;font-size:0.92rem;font-weight:600;">
+                    <span>{{ c.Category_Name }}</span>
+                    <span aria-hidden="true">→</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if brand %}
+    <div>
+        <p style="margin:0 0 0.5rem;font-size:0.82rem;font-weight:700;color:var(--ds-text-muted);text-transform:uppercase;letter-spacing:.04em;">Brand</p>
+        <ul style="list-style:none;margin:0;padding:0;display:grid;gap:0.45rem;">
+            {% for b in brand %}
+            <li style="font-size:0.9rem;color:var(--ds-text-muted);">{{ b.Brand_Name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</aside>

@@ -1,0 +1,19 @@
+{
+  "brand": "Digital Shop USA",
+  "note": "Maps product categories to Digital Shop USA catalog imagery without altering DB media fields.",
+  "categoryImages": {
+    "Laptop": "assets/products/cat-laptop.webp",
+    "Processor": "assets/products/cat-processor.webp",
+    "Motherboard": "assets/products/cat-motherboard.webp",
+    "RAM": "assets/products/cat-ram.webp",
+    "HDD": "assets/products/cat-hdd.webp",
+    "SSD": "assets/products/cat-ssd.webp",
+    "Graphics Card": "assets/products/cat-gpu.webp",
+    "Power Supply": "assets/products/cat-psu.webp",
+    "Casing": "assets/products/cat-casing.webp",
+    "CPU Cooler": "assets/products/cat-cooler.webp",
+    "Keyboard": "assets/products/cat-keyboard.webp",
+    "Mouse": "assets/products/cat-mouse.webp"
+  },
+  "productImages": {}
+}

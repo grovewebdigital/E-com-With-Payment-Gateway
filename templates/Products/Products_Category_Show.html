@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% load product_images %}
+
+{% block title %}{{ current_category.Category_Name|default:"Products" }} | Digital Shop USA{% endblock %}
+
+{% block body %}
+<section class="ds-page">
+    <div class="ds-container">
+        <nav class="ds-breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span aria-hidden="true">/</span>
+            <span>{% if current_category %}{{ current_category.Category_Name }}{% else %}Shop{% endif %}</span>
+        </nav>
+
+        <div class="ds-section__head">
+            <h1 style="margin:0 0 0.4rem;font-size:clamp(1.6rem,2.5vw,2.1rem);letter-spacing:-0.03em;">
+                {% if current_category %}{{ current_category.Category_Name }}{% else %}All Products{% endif %}
+            </h1>
+            <p>{% if current_category %}{% category_blurb current_category %}{% else %}Browse technology products available at Digital Shop USA.{% endif %}</p>
+        </div>
+
+        <div class="ds-shop-layout">
+            {% include "Products/Filter.html" %}
+
+            <div>
+                <div class="ds-prod-grid" id="filteredProducts">
+                    {% include "Products/Products_Container.html" %}
+                </div>
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                <nav aria-label="Pagination" style="margin-top:2rem;display:flex;justify-content:center;gap:0.4rem;flex-wrap:wrap;">
+                    {% if page_obj.has_previous %}
+                    <a class="ds-btn ds-btn--ghost ds-btn--sm" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% endif %}
+                    {% for i in nums %}
+                    <a class="ds-btn ds-btn--ghost ds-btn--sm {% if forloop.counter == page_obj.number %}ds-btn--primary{% endif %}" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <a class="ds-btn ds-btn--ghost ds-btn--sm" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    {% endif %}
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.querySelectorAll('.add-wishlist').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-product');
+      if (!id) return;
+      fetch("{% url 'add_wish_list' %}?pid=" + encodeURIComponent(id), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      }).catch(function () {});
+    });
+  });
+</script>
+{% endblock %}

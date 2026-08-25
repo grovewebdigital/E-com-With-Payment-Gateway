@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log In | Digital Shop USA{% endblock %}
+
+{% block body %}
+<section class="ds-page">
+    <div class="ds-container">
+        <div class="ds-auth">
+            <h1>Welcome back</h1>
+            <p>Log in to manage your Digital Shop USA account, orders, and cart.</p>
+            <form action="" method="POST" style="display:grid;gap:0.9rem;">
+                {% csrf_token %}
+                {% include 'alert.html' %}
+                <div>
+                    <label for="username" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Username</label>
+                    <input id="username" name="username" type="text" required
+                           style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div>
+                    <label for="password" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.35rem;">Password</label>
+                    <input id="password" name="password" type="password" required
+                           style="width:100%;height:46px;border:1px solid var(--ds-border);border-radius:10px;padding:0 0.9rem;font:inherit;">
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:1rem;font-size:0.88rem;">
+                    <a href="{% url 'forget_password' %}">Forgot password?</a>
+                </div>
+                <button class="ds-btn ds-btn--primary ds-btn--block" type="submit">Log In</button>
+            </form>
+            <p style="margin-top:1.25rem;margin-bottom:0;text-align:center;font-size:0.9rem;">
+                New here? <a href="{% url 'Registration' %}">Create an account</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
